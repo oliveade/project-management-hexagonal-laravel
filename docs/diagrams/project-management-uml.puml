@@ -1,0 +1,45 @@
+@startuml
+package "Domain" {
+    class Project {
+        -id : ProjectId
+        -name : string
+        -tasks : Task[]
+        +addTask(task)
+    }
+
+    class Task {
+        -title : string
+        -status : TaskStatus
+        +start()
+        +complete()
+    }
+
+    class ProjectId
+    enum TaskStatus
+
+    interface ProjectRepository {
+        +save(Project)
+        +getById(ProjectId)
+    }
+
+    Project "1" o-- "*" Task
+}
+
+package "Application" {
+    class CreateProjectCommand
+    class CreateProjectHandler
+    class AddTaskCommand
+    class AddTaskHandler
+}
+
+package "Infrastructure" {
+    class ProjectController
+    class EloquentProjectRepository
+}
+
+CreateProjectHandler --> ProjectRepository
+AddTaskHandler --> ProjectRepository
+EloquentProjectRepository ..|> ProjectRepository
+ProjectController --> CreateProjectHandler
+ProjectController --> AddTaskHandler
+@enduml
